@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Teams";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Teams</h1>
+    <div id='teams-list'>
+    </div>
+</div>
+
+@section scripts
+{ 
+    <script type="text/javascript">
+        $(() => {
+            $.get("http://nba-services.com/api/teams", function( data ) {
+                $("#teams-list").text(data);
+            });
+        });
+    </script>
+}

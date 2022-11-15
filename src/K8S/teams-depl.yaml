@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teams-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: teamsservice
+  template:
+    metadata:
+      labels:
+        app: teamsservice
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: teamsservice
+          image: maximnesterov/teamsservice:1.1
+          imagePullPolicy: "Always"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teamsservice-clusterip-srv
+spec: 
+  type: ClusterIP
+  selector:
+    app: teamsservice
+  ports:
+    - name: teamsservice
+      protocol: TCP
+      port: 80
+      targetPort: 80

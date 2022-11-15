@@ -1,0 +1,1 @@
+docker run --name nbaAppTest -p 5432:5432 -e POSTGRES_PASSWORD=8191 -e POSTGRES_DB=nbatest -d postgres 
