@@ -8,8 +8,9 @@ internal class PlayersMapping
 {
     public void Configure(EntityTypeBuilder<Player> builder)
     {
-        builder.ToTable("nbateams", "public");
+        builder.ToTable("players", "public");
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Birthday).HasColumnName("birthday");
         builder.Property(e => e.FirstName).HasColumnName("firstname");
         builder.Property(e => e.LastName).HasColumnName("lastname");

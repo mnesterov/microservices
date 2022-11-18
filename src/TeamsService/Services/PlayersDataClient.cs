@@ -1,8 +1,7 @@
-using System.Text.Json;
 using Domain.Repositories;
 using Dtos;
 using Infrastructure.Exceptions;
-using Infrastructure.Formatters.Json;
+using Infrastructure.Serialization.Json;
 using Infrastructure.Validation;
 
 namespace TeamsService.Services;
@@ -27,19 +26,23 @@ public class PlayersDataClient : IPlayersDataClient
             var team = await _teamsRepository.GetTeamAsync(teamId);
             Ensure.IsFound(team);
 
-            var url = $"{_configuration["PlayersApiEndpoint"]}/api/players?teamid={teamId}";
-            var response = await _httpClient.GetAsync(url);
-            var content = await response.Content.ReadAsStringAsync();
+            var url = $"{_configuration["PlayersApiEndpoint"]}/api/players?teamid={teamId}"; 
+            string content;
             
-            var options = new JsonSerializerOptions{ PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance };
-            var players = JsonSerializer.Deserialize<ICollection<PlayerDto>>(content, options);
+            using (var response = await _httpClient.GetAsync(url))
+            {
+                content = await response.Content.ReadAsStringAsync();
+            }
+
+            var players = JsonSerializationHelper.Deserialize<ICollection<PlayerDto>>(content);
 
             return players;
         }
-        catch
+        catch (Exception e)
         {
             //simplified exception handling for testing purposes
-            throw new NotFoundException();
+            Console.WriteLine($"--> Exception is thrown when attempting to access /players from Teams controller: {e.Message}");
+            throw new AppException();
         }
     }
 } 

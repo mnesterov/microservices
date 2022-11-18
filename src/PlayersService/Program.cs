@@ -1,5 +1,5 @@
 using DataAccess.EntityFramework;
-using Infrastructure.Formatters.Json;
+using Infrastructure.Serialization.Json;
 using PlayersService.Mappers;
 using PlayersService.Services;
 
@@ -9,7 +9,7 @@ void Config()
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.ConfigureDataAccessToDummyData();
+    SetupDataAccess(builder);
     ConfigServices(builder.Services);
 
     var app = builder.Build();
@@ -47,4 +47,9 @@ void ConfigServices(IServiceCollection serviceCollection)
     serviceCollection.AddSwaggerGen();
 }
 
+void SetupDataAccess(WebApplicationBuilder builder)
+{
+    var postgreSqlConnectionString = builder.Configuration.GetConnectionString("PostgreSqlDatabase");
+    builder.ConfigureDataAccessToPostgres(postgreSqlConnectionString);
+}
 

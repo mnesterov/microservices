@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Infrastructure.Extensions.StringExtensions;
 
-namespace Infrastructure.Formatters.Json;
+namespace Infrastructure.Serialization.Json;
 
 public class SnakeCaseNamingPolicy : JsonNamingPolicy
 {

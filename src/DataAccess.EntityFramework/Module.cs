@@ -14,10 +14,8 @@ public static class Module
         builder.Services.AddScoped<IPlayersRepository, DummyPlayersRepository>(); 
     }
 
-    public static void ConfigureDataAccessToPostgres(this WebApplicationBuilder builder)
+    public static void ConfigureDataAccessToPostgres(this WebApplicationBuilder builder, string connectionString)
     {
-        var connectionString = "User ID=postgres;Password=8191;Host=localhost;Port=5432;Database=nbatest;";
-
         builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
 
         builder.Services.AddScoped<ITeamsRepository, PostgreTeamsRepository>();    

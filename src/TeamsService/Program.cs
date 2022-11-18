@@ -2,7 +2,7 @@ using TeamsService.Mappers;
 using TeamsService.Services;
 using Infrastructure.Middlewares;
 using DataAccess.EntityFramework;
-using Infrastructure.Formatters.Json;
+using Infrastructure.Serialization.Json;
 
 Config();
 
@@ -10,9 +10,9 @@ void Config()
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    SetupDataAccess(builder);
+    
     // Add services to the container.
-
-    builder.ConfigureDataAccessToDummyData();
     ConfigServices(builder.Services);
 
     var app = builder.Build();
@@ -59,4 +59,8 @@ void ConfigServices(IServiceCollection serviceCollection)
     serviceCollection.AddSwaggerGen();
 }
 
-
+void SetupDataAccess(WebApplicationBuilder builder)
+{
+    var postgreSqlConnectionString = builder.Configuration.GetConnectionString("PostgreSqlDatabase");
+    builder.ConfigureDataAccessToPostgres(postgreSqlConnectionString);
+}
