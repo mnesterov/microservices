@@ -1,17 +1,14 @@
 using Domain.Models;
 using Domain.Repositories;
 
-namespace DataAccess.EntityFramework.Repositories;
+namespace DataAccess.DummyData.Repositories;
 
-public class DummyPlayersRepository : IPlayersRepository
+internal class DummyPlayersRepository : IPlayersRepository
 {
-    private readonly ITeamsRepository _teamsRepository;
     private readonly Lazy<List<Player>> _players;
 
-    public DummyPlayersRepository(ITeamsRepository teamsRepository) 
+    public DummyPlayersRepository() 
     {
-        _teamsRepository = teamsRepository;
-
         _players = new Lazy<List<Player>>(() => 
         {
             const int lakersTeamId = 14;
@@ -43,5 +40,10 @@ public class DummyPlayersRepository : IPlayersRepository
         var playersValue = await GetPlayersAsync();
         var players = playersValue.Where(p => p.TeamId == teamId).ToList();
         return players;
+    }
+
+    public async Task<Player> CreatePlayer(Player.CreateData createData)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,9 +1,9 @@
 using Domain.Models;
 using Domain.Repositories;
 
-namespace DataAccess.EntityFramework.Repositories;
+namespace DataAccess.DummyData.Repositories;
 
-public class DummyTeamsRepository : ITeamsRepository
+internal class DummyTeamsRepository : ITeamsRepository
 {
     private readonly Lazy<List<Team>> _teams;
 

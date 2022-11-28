@@ -10,7 +10,7 @@
                 });
             });
 
-            $("#teams-list").on( "click", "a", function() {
+            $("#teams-list").on("click", "a", function() {
                 $("#players").show();
                 
                 const teamId = $(this).data('teamid');

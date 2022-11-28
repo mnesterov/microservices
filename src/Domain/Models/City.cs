@@ -1,6 +1,6 @@
 namespace Domain.Models;
 
-public class City 
+public class City : Entity<int>
 {
     protected City() 
     {
@@ -12,7 +12,6 @@ public class City
         Name = name;
     }
 
-    public int Id { get; private set; }
     public string Name { get; private set; }
 
     public ICollection<Team> Teams { get; private set; }

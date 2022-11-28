@@ -5,13 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": "TeamsService",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/TeamsService/bin/Debug/net6.0/TeamsService.dll",
             "args": [],
             "cwd": "${workspaceFolder}/TeamsService",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "PlayersService",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/PlayersService/bin/Debug/net6.0/PlayersService.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/PlayersService",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

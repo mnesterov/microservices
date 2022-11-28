@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TeamsService.Services;
 using Dtos;
+using MassTransit;
 
 namespace TeamsService.Controllers;
 
@@ -10,11 +11,16 @@ public class TeamsController : ControllerBase
 {
     private readonly ITeamsService _teamsService;
     private readonly IPlayersDataClient _playersDataClient;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public TeamsController(ITeamsService teamsService, IPlayersDataClient playersDataClient)
+    public TeamsController(
+        ITeamsService teamsService, 
+        IPlayersDataClient playersDataClient,
+        IPublishEndpoint publishEndpoint)
     {
         _teamsService = teamsService;
         _playersDataClient = playersDataClient;
+        _publishEndpoint = publishEndpoint;
     }
 
     [HttpGet]
@@ -33,8 +39,20 @@ public class TeamsController : ControllerBase
 
     [HttpGet]
     [Route("{id:int}/players")]
-    public async Task<ActionResult<PlayerDto>> GetTeamPlayersAsync(int id)
+    public async Task<ActionResult<ICollection<PlayerDto>>> GetTeamPlayersAsync(int id)
     {
         return Ok(await _playersDataClient.GetTeamPlayersAsync(id));
+    }
+
+    [HttpPost]
+    [Route("{id:int}/players")]
+    public async Task<ActionResult> AddTeamPlayerAsync([FromRoute]int id, [FromBody]PlayerDto.CreateData data)
+    {
+        data = data ?? new PlayerDto.CreateData();
+        data.TeamId = id;
+
+        await _publishEndpoint.Publish(data);
+
+        return Ok();
     }
 }

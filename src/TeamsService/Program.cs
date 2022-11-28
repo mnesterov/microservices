@@ -3,64 +3,80 @@ using TeamsService.Services;
 using Infrastructure.Middlewares;
 using DataAccess.EntityFramework;
 using Infrastructure.Serialization.Json;
+using MassTransit;
 
-Config();
-
-void Config()
+internal class Program
 {
-    var builder = WebApplication.CreateBuilder(args);
-
-    SetupDataAccess(builder);
-    
-    // Add services to the container.
-    ConfigServices(builder.Services);
-
-    var app = builder.Build();
-
-    app.UseExceptionHandle();
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+    private static void Main(string[] args)
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        var builder = WebApplication.CreateBuilder(args);
+
+        SetupDataAccess(builder);
+        ConfigServices(builder.Services);
+        SetupMassTransit(builder);
+
+        var app = builder.Build();
+
+        app.UseExceptionHandle();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseCors(builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
     }
 
-    app.UseHttpsRedirection();
+    private static void ConfigServices(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddSingleton<ITeamsMapper, TeamsMapper>();
+        serviceCollection.AddScoped<ITeamsService, TeamsService.Services.TeamsService>();
 
-    app.UseCors(builder => builder
-     .AllowAnyOrigin()
-     .AllowAnyMethod()
-     .AllowAnyHeader()); 
+        serviceCollection.AddHttpClient<IPlayersDataClient, PlayersDataClient>();
 
-    app.UseAuthorization();
+        serviceCollection
+            .AddControllers()
+            .AddJsonOptions(
+                options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance;
+                });
 
-    app.MapControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        serviceCollection.AddEndpointsApiExplorer();
+        serviceCollection.AddSwaggerGen();
+    }
 
-    app.Run();
-}
+    private static void SetupMassTransit(WebApplicationBuilder builder)
+    {
+        builder.Services.AddMassTransit(x =>
+        {
+            x.SetSnakeCaseEndpointNameFormatter();
 
-void ConfigServices(IServiceCollection serviceCollection) 
-{
-    serviceCollection.AddSingleton<ITeamsMapper, TeamsMapper>();
-    serviceCollection.AddScoped<ITeamsService, TeamsService.Services.TeamsService>();
-
-    serviceCollection.AddHttpClient<IPlayersDataClient, PlayersDataClient>();
-
-    serviceCollection
-        .AddControllers()
-        .AddJsonOptions(
-            options => { 
-                options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance;
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
+                cfg.ConfigureEndpoints(context);
             });
+        });
+    }
 
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    serviceCollection.AddEndpointsApiExplorer();
-    serviceCollection.AddSwaggerGen();
-}
-
-void SetupDataAccess(WebApplicationBuilder builder)
-{
-    var postgreSqlConnectionString = builder.Configuration.GetConnectionString("PostgreSqlDatabase");
-    builder.ConfigureDataAccessToPostgres(postgreSqlConnectionString);
+    private static void SetupDataAccess(WebApplicationBuilder builder)
+    {
+        var postgreSqlConnectionString = builder.Configuration.GetConnectionString("PostgreSqlDatabase");
+        builder.ConfigureDataAccessToPostgres(postgreSqlConnectionString);
+    }
 }

@@ -6,5 +6,13 @@ public class PlayerDto
     public DateTime Birthday { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public int TeamId { get; set; }
+    public int? TeamId { get; set; }
+
+    public class CreateData
+    {
+        public DateTime Birthday { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int? TeamId { get; set; }        
+    }
 }
