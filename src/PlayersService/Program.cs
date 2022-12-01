@@ -1,5 +1,8 @@
+using Confluent.Kafka;
 using DataAccess.EntityFramework;
 using Infrastructure.Serialization.Json;
+using KafkaMessageBroker;
+using KafkaMessageBroker.Events;
 using MassTransit;
 using PlayersService.Consumers;
 using PlayersService.Mappers;
@@ -63,6 +66,26 @@ internal class Program
             {
                 cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
                 cfg.ConfigureEndpoints(context);
+            });
+
+            x.AddRider(rider =>
+            {
+                rider.AddConsumer<TeamRosterUpdateEventConsumer>();
+
+                rider.UsingKafka((context, cfg) =>
+                {
+                    cfg.Host(builder.Configuration.GetConnectionString("KafkaBroker"));
+
+                    var groupId = Guid.NewGuid().ToString(); // always start from beginning
+                    cfg.TopicEndpoint<string, TeamRosterUpdateEvent>(KafkaTopics.TeamEventsTopic, groupId, topicConfig =>
+                    {
+                        topicConfig.CreateIfMissing();
+
+                        topicConfig.AutoOffsetReset = AutoOffsetReset.Earliest;
+
+                        topicConfig.ConfigureConsumer<TeamRosterUpdateEventConsumer>(context);
+                    });
+                });
             });
         });
     }

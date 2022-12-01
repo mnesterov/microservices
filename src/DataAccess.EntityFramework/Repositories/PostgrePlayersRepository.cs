@@ -26,14 +26,26 @@ internal class PostgrePlayersRepository : IPlayersRepository
         return teams;
     }
 
-    public async Task<Player> CreatePlayer(Player.CreateData createData)
+    public async Task<Player> CreatePlayerAsync(Player.CreateData createData)
     {
         var player = CreatePlayerPrivate(createData);
         
         var entry = await _players.AddAsync(player);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
         
         return entry.Entity;
+    }
+
+    public async Task UpdateTeamForPlayersAsync(ICollection<int> playerIds, int? teamId)
+    {
+        var players = _players.Where(p => playerIds.Contains(p.Id));
+        
+        foreach (var p in players)
+        {
+            p.AssignToTeam(teamId);
+        }
+        
+        await _dbContext.SaveChangesAsync();
     }
 
     #region Private Methods

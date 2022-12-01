@@ -4,6 +4,8 @@ using Infrastructure.Middlewares;
 using DataAccess.EntityFramework;
 using Infrastructure.Serialization.Json;
 using MassTransit;
+using KafkaMessageBroker;
+using KafkaMessageBroker.Events;
 
 internal class Program
 {
@@ -70,6 +72,16 @@ internal class Program
             {
                 cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
                 cfg.ConfigureEndpoints(context);
+            });
+
+            x.AddRider(rider =>
+            {
+                rider.AddProducer<string, TeamRosterUpdateEvent>(KafkaTopics.TeamEventsTopic);
+
+                rider.UsingKafka((context, cfg) =>
+                {
+                    cfg.Host(builder.Configuration.GetConnectionString("KafkaBroker"));
+                });
             });
         });
     }

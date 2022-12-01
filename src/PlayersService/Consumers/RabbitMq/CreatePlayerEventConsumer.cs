@@ -15,6 +15,6 @@ public class CreatePlayerEventConsumer : IConsumer<PlayerDto.CreateData>
 
     public async Task Consume(ConsumeContext<PlayerDto.CreateData> context)
     {
-        await _playersService.CreatePlayer(context.Message);
+        await _playersService.CreatePlayerAsync(context.Message);
     }
 }

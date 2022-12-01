@@ -24,8 +24,8 @@ public class PlayersController : ControllerBase
 
     [HttpPost]
     [Route("")]
-    public async Task<ActionResult<PlayerDto>> GetPlayersAsync([FromBody]PlayerDto.CreateData createData)
+    public async Task<ActionResult<PlayerDto>> CreatePlayerAsync([FromBody]PlayerDto.CreateData createData)
     {
-        return Ok(await _playersService.CreatePlayer(createData));
+        return Ok(await _playersService.CreatePlayerAsync(createData));
     }
 }

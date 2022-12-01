@@ -5,7 +5,8 @@ namespace PlayersService.Services;
 public interface IPlayersService
 {
     Task<ICollection<PlayerDto>> GetPlayersAsync(int? teamId);
-    Task<PlayerDto> CreatePlayer(PlayerDto.CreateData data);
+    Task<PlayerDto> CreatePlayerAsync(PlayerDto.CreateData data);
+    Task UpdatePlayersTeamsAsync(TeamRosterDto.UpdateData data);
 } 
 
     
