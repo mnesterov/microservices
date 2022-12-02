@@ -6,6 +6,7 @@ using Infrastructure.Serialization.Json;
 using MassTransit;
 using KafkaMessageBroker;
 using KafkaMessageBroker.Events;
+using Microsoft.EntityFrameworkCore;
 
 internal class Program
 {
@@ -20,6 +21,8 @@ internal class Program
         var app = builder.Build();
 
         app.UseExceptionHandle();
+        
+        SeedData(app);
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -89,6 +92,18 @@ internal class Program
     private static void SetupDataAccess(WebApplicationBuilder builder)
     {
         var postgreSqlConnectionString = builder.Configuration.GetConnectionString("PostgreSqlDatabase");
-        builder.ConfigureDataAccessToPostgres(postgreSqlConnectionString);
+
+        var currentAssemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+        builder.ConfigureDataAccessToPostgres(postgreSqlConnectionString, currentAssemblyName);
+    }
+
+    private static void SeedData(IApplicationBuilder app)
+    {
+        using (var scope = app.ApplicationServices.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetService<AppDbContext>()!;
+            dbContext.Database.Migrate();
+        }
     }
 }
