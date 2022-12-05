@@ -6,12 +6,11 @@ public class Team : Entity<int>
     {
     }
 
-    public Team(int id, string name, City city)
+    public Team(int id, string name, int cityId)
     {
         Id = id;
         Name = name;
-        CityId = city.Id;
-        City = city;
+        CityId = cityId;
     }
 
     public string Name { get; private set; }

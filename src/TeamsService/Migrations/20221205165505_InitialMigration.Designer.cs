@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TeamsService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221202163047_initialmigration")]
-    partial class initialmigration
+    [Migration("20221205165505_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -106,7 +106,8 @@ namespace TeamsService.Migrations
                 {
                     b.HasOne("Domain.Models.Team", "Team")
                         .WithMany("Players")
-                        .HasForeignKey("TeamId");
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Team");
                 });
@@ -116,7 +117,7 @@ namespace TeamsService.Migrations
                     b.HasOne("Domain.Models.City", "City")
                         .WithMany("Teams")
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.Navigation("City");

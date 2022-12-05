@@ -20,6 +20,7 @@ internal class PlayersMapping
             .HasOne(e => e.Team)
             .WithMany(e => e.Players)
             .HasForeignKey(e => e.TeamId)
-            .HasPrincipalKey(e => e.Id);
+            .HasPrincipalKey(e => e.Id)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

@@ -18,7 +18,8 @@ internal class TeamsMapping
             .HasOne(e => e.City)
             .WithMany(e => e.Teams)
             .HasForeignKey(e => e.CityId)
-            .HasPrincipalKey(e => e.Id);
+            .HasPrincipalKey(e => e.Id)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder
             .HasMany(e => e.Players)

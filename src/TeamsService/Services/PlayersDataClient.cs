@@ -1,6 +1,5 @@
 using Domain.Repositories;
 using Dtos;
-using Infrastructure.Exceptions;
 using Infrastructure.Serialization.Json;
 using Infrastructure.Validation;
 
@@ -11,12 +10,17 @@ public class PlayersDataClient : IPlayersDataClient
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly ITeamsRepository _teamsRepository;
+    private readonly ILogger<PlayersDataClient> _logger;
 
-    public PlayersDataClient(HttpClient httpClient, IConfiguration configuration, ITeamsRepository teamsRepository)
+    public PlayersDataClient(HttpClient httpClient, 
+        IConfiguration configuration, 
+        ITeamsRepository teamsRepository,
+        ILogger<PlayersDataClient> logger)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _teamsRepository = teamsRepository;
+        _logger = logger;
     }
 
     public async Task<ICollection<PlayerDto>> GetTeamPlayersAsync(int teamId) 
@@ -40,9 +44,8 @@ public class PlayersDataClient : IPlayersDataClient
         }
         catch (Exception e)
         {
-            //simplified exception handling for testing purposes
-            Console.WriteLine($"--> Exception is thrown when attempting to access /players from Teams controller: {e.Message}");
-            throw new AppException();
+            _logger.LogInformation($"--> Exception is thrown when attempting to access /players from Teams controller: {e}");
+            throw;
         }
     }
 } 
