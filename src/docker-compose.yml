@@ -1,10 +1,62 @@
-version: "3.9"
+version: '3.4'
+
 services:
+  sqldata:
+    container_name: nba_sql_container
+    image: mcr.microsoft.com/mssql/server:2019-CU18-ubuntu-20.04
+
   postgres:
-    image: postgres
-    environment:
-      POSTGRES_DB: "nbatest"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "8191"
-    ports:
-      - "5432:5432"
+    container_name: nba_postgres_container
+    image: postgres:14.1-alpine
+
+  rabbitmq:
+    container_name: nba_rabbit_container
+    image: rabbitmq:3-management-alpine
+
+  zookeeper:
+    container_name: nba_zoo_container
+    image: confluentinc/cp-zookeeper:7.2.1
+  
+  kafka:
+    container_name: nba_kafka_container
+    image: confluentinc/cp-kafka:7.2.1
+    depends_on:
+      - zookeeper
+      - rabbitmq
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+
+  players.api:
+    container_name: nba_players_container
+    image: ${DOCKER_REGISTRY-}playersapi
+    build:
+      context: .
+      dockerfile: Services/Players/Players.API/Dockerfile
+    depends_on:
+      - sqldata
+      - rabbitmq
+      - kafka
+
+  teams.api:
+    container_name: nba_teams_container
+    image: ${DOCKER_REGISTRY-}teamsapi
+    build:
+      context: .
+      dockerfile: Services/Teams/Teams.API/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+      - kafka
+
+  webhttpaggregator:
+    image: ${DOCKER_REGISTRY-}webhttpaggregator
+    build:
+      context: .
+      dockerfile: WebHttpAggregator/Dockerfile
+    depends_on:
+      - players.api
+      - teams.api

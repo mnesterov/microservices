@@ -1,0 +1,100 @@
+version: '3.4'
+
+services:
+  webhttpaggregator:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ApiEndpoints__Players=http://players.api:80
+      - ApiEndpoints__Teams=http://teams.api:80
+    ports:
+      - "58259:80"
+      - "58258:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  players.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__SqlServer=Server=sqldata;database=nbaplayers;User Id=sa;Password=Pass@word;
+      - ConnectionStrings__RabbitMq=amqp://rabbitmq:5672
+      - ConnectionStrings__KafkaBroker=kafka:9092
+      - Logging__LogLevel__Default=Information
+      - Kafka__TopicPrefix=${KAFKA_TOPIC_PREFIX}
+    ports:
+      - "58256:80"
+      - "58255:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  teams.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__PostgreSql=User ID=postgres;Password=123;Host=postgres;Port=5432;Database=nbatest;
+      - ConnectionStrings__RabbitMq=amqp://rabbitmq:5672
+      - ConnectionStrings__KafkaBroker=kafka:9092
+      - Logging__LogLevel__Default=Information
+      - Kafka__TopicPrefix=${KAFKA_TOPIC_PREFIX}
+    ports:
+      - "58252:80"
+      - "58251:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  postgres:
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+    ports:
+      - "5435:5432"
+    volumes:
+       - postgres:/data/postgres
+
+  rabbitmq:
+    ports:
+      - "16672:15672"
+      - "6672:5672"
+
+  zookeeper:
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+  
+  kafka:
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    ports:
+      - "8088:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+
+volumes:
+  postgres:
+  sqldata:
