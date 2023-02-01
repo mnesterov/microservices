@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using WebHttpAggregator.Dtos;
 using WebHttpAggregator.Services;
@@ -6,7 +7,8 @@ using WebHttpAggregator.Services.Players;
 
 namespace WebHttpAggregator.Controllers
 {
-    [Route("api/teams")]
+    [Authorize]
+    [Route("api/v1/teams")]
     [ApiController]
     public class TeamsController : ControllerBase
     {

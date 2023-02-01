@@ -114,6 +114,8 @@ public class HttpApiClient : IHttpApiClient
                     return new NotFoundResult();
                 case System.Net.HttpStatusCode.BadRequest: 
                     return new BadRequestResult();
+                case System.Net.HttpStatusCode.Unauthorized:
+                    return new UnauthorizedResult();
                 default:
                     {
                         var e = new ArgumentOutOfRangeException();

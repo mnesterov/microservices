@@ -3,6 +3,8 @@ using WebHttpAggregator.Services.Players;
 using WebHttpAggregator.Services.Teams;
 using WebHttpAggregator.Services;
 using WebHttpAggregator.Serialization.Json;
+using Ocelot.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WebHttpAggregator.Extensions
 {
@@ -24,9 +26,21 @@ namespace WebHttpAggregator.Extensions
                         options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance;
                     });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.Authority = builder.Configuration.GetValue<string>("Urls:IdentityServer");
+                    options.Audience = "webagg";
+                });
+
+            builder.Services.AddOcelot();
+            builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
             return builder;
         }

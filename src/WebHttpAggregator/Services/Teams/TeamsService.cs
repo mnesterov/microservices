@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using WebHttpAggregator.Configs;
+using WebHttpAggregator.Configuration;
 using WebHttpAggregator.Dtos;
 
 namespace WebHttpAggregator.Services.Teams

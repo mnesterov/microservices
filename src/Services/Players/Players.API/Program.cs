@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using Players.API.Extensions;
 
 internal class Program
@@ -6,10 +7,11 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.SetupDataAccess();
-        builder.ConfigureServices();
-        builder.ConfigureAutofac();
-        builder.ConfigureMassTransit();
+        builder
+            .SetupDataAccess()
+            .ConfigureServices()
+            .ConfigureAutofac()
+            .ConfigureMassTransit();
 
         var app = builder.Build();
 
@@ -18,18 +20,28 @@ internal class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app
+                .UseDeveloperExceptionPage()
+                .UseSwagger()
+                .UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint($"/swagger/v1/swagger.json", "Players API v1");
+                    options.OAuthClientId("playersswaggerui");
+                });
         }
 
-        app.UseCors(builder => builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+        app.UseCors("any");
 
+        app.UseRouting();
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllers();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapDefaultControllerRoute();
+            endpoints.MapControllers();
+        });
 
         app.Run();
     }

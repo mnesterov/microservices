@@ -1,3 +1,5 @@
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 using WebHttpAggregator.Extensions;
 
 internal class Program
@@ -6,23 +8,31 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.ConfigureServices();
-        builder.SetupConfigs();
+        builder.WebHost.ConfigureAppConfiguration((hostingContext, config) =>
+        {
+            config.AddOcelot("Configuration/Ocelot/", hostingContext.HostingEnvironment);
+        });
+
+        builder
+            .ConfigureServices()
+            .SetupConfigs();
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseDeveloperExceptionPage();
         }
 
         app.UseHttpsRedirection();
 
+        app.UseRouting();
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllers();
+        app.UseOcelot();
 
         app.Run();
     }

@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Players.Application.Commands;
 using Players.Application.Commands.IdentifiedCommand;
@@ -8,6 +9,7 @@ using System.Net;
 
 namespace PlayersService.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/v1/players")]
 public class PlayersController : ControllerBase

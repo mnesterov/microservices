@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Players.Application.Commands;
-using WebHttpAggregator.Configs;
+using WebHttpAggregator.Configuration;
 using WebHttpAggregator.Dtos;
 
 namespace WebHttpAggregator.Services.Players

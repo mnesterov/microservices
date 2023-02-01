@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Players.Application.Commands;
 using System.Net;
 using WebHttpAggregator.Dtos;
@@ -6,7 +7,8 @@ using WebHttpAggregator.Services.Players;
 
 namespace WebHttpAggregator.Controllers
 {
-    [Route("api/players")]
+    [Authorize]
+    [Route("api/v1/players")]
     [ApiController]
     public class PlayersController : ControllerBase
     {

@@ -1,4 +1,4 @@
-﻿using WebHttpAggregator.Configs;
+﻿using WebHttpAggregator.Configuration;
 
 namespace WebHttpAggregator.Extensions
 {

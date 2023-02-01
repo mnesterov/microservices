@@ -1,0 +1,70 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/{version}/teams",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "teams.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/teams",
+      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "SwaggerKey": "teams"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/players?teamId={teamId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "players.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/teams/{teamId}/players",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "SwaggerKey": "teams"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/teams/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "teams.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/teams/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "SwaggerKey": "teams"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "teams",
+      "Config": [
+        {
+          "Name": "Teams API",
+          "Version": "v1",
+          "Url": "https://localhost:58251/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}
+
+
+

@@ -7,6 +7,8 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ApiEndpoints__Players=http://players.api:80
       - ApiEndpoints__Teams=http://teams.api:80
+      - Urls__IdentityServer=http://identityserver:80
+      - Urls__IdentityServerExternal=http://localhost:58250
     ports:
       - "58259:80"
       - "58258:443"
@@ -23,6 +25,9 @@ services:
       - ConnectionStrings__KafkaBroker=kafka:9092
       - Logging__LogLevel__Default=Information
       - Kafka__TopicPrefix=${KAFKA_TOPIC_PREFIX}
+      - Urls__IdentityServer=http://identityserver:80
+      - Urls__IdentityServerExternal=http://localhost:58250
+      - Urls__WebAggregator=http://localhost:58259
     ports:
       - "58256:80"
       - "58255:443"
@@ -39,6 +44,9 @@ services:
       - ConnectionStrings__KafkaBroker=kafka:9092
       - Logging__LogLevel__Default=Information
       - Kafka__TopicPrefix=${KAFKA_TOPIC_PREFIX}
+      - Urls__IdentityServer=http://identityserver:80
+      - Urls__IdentityServerExternal=http://localhost:58250
+      - Urls__WebAggregator=http://localhost:58259
     ports:
       - "58252:80"
       - "58251:443"
@@ -95,6 +103,20 @@ services:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
 
+  identityserver:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ClientUrls__TeamsAPI=https://localhost:58251
+      - ClientUrls__PlayersAPI=https://localhost:58255
+      - ClientUrls__WebHttpAggregator=https://localhost:58258
+    ports:
+      - "58250:80"
+      - "58249:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 volumes:
   postgres:
   sqldata:
+

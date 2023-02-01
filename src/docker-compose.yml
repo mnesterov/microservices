@@ -60,3 +60,11 @@ services:
     depends_on:
       - players.api
       - teams.api
+
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: Services/IdentityServer/Dockerfile
+    depends_on:
+      - webhttpaggregator

@@ -1,4 +1,4 @@
-﻿namespace WebHttpAggregator.Configs
+﻿namespace WebHttpAggregator.Configuration
 {
     public class ApiEndpointsConfig
     {

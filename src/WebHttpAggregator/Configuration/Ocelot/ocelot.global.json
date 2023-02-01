@@ -1,0 +1,10 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:58258",
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration"
+  }
+}
+
+
+

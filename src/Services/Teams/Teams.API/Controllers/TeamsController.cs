@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Teams.Dtos;
 using Teams.Application.Queries;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Teams.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/v1/teams")]
 public class TeamsController : ControllerBase
