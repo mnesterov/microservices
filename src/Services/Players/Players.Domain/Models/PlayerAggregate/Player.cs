@@ -29,6 +29,7 @@ public class Player : EntityWithKey<int>, IAggregateRoot
         Birthday = birthday;
         FirstName = firstName;
         LastName = lastName;
+        SalaryInfo = new SalaryInfo(salary, 1);
     }
 
     #endregion
